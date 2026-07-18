@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: agile-core-render
+    runtime: docker
+    plan: standard
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: agile-core-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: agile-core-redis
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ENVIRONMENT
+        value: production
+      - key: PORT
+        value: 8000
+
+  - type: redis
+    name: agile-core-redis
+    plan: free
+    ipAllowList: []
+
+databases:
+  - name: agile-core-db
+    plan: free
+    postgresMajorVersion: 15
